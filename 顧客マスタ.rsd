@@ -1,0 +1,92 @@
+<api:script xmlns:api="http://apiscript.com/ns?v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- See Column Definitions to specify column behavior and use XPaths to extract column values from JSON. -->
+  <api:info title="顧客マスタ" desc="Generated schema file." xmlns:other="http://apiscript.com/ns?v1">
+    <!-- You can modify the name, type, and column size here. -->
+    <attr name="id"                   xs:type="string"  readonly="false"                 other:xPath="/json/document/id"                   />
+    <attr name="登録日"                   xs:type="date"  readonly="false"                 other:xPath="/json/document/item[4]/value"                   />
+    <attr name="顧客No."                   xs:type="string"  readonly="false"              other:xPath="/json/document/item[7]/value"                   />
+    <attr name="会社名"                   xs:type="string"  readonly="false"               other:xPath="/json/document/item[10]/value"                   />
+    <attr name="会社名（フリガナ）"                   xs:type="string"  readonly="false"   other:xPath="/json/document/item[13]/value"                   />
+    <attr name="郵便番号"                   xs:type="string"  readonly="false"             other:xPath="/json/document/item[16]/value"                   />
+    <attr name="登記本社所在地"                   xs:type="string"  readonly="false"       other:xPath="/json/document/item[19]/value"                   />
+    <attr name="電話番号（代表)"                   xs:type="string"  readonly="false"      other:xPath="/json/document/item[22]/value"                   />
+    <attr name="メールアドレス"                   xs:type="string"  readonly="false"       other:xPath="/json/document/item[25]/value"                   />
+    <attr name="ホームページ"                   xs:type="string"  readonly="false"         other:xPath="/json/document/item[28]/value"                   />
+    <attr name="従業員数"                   xs:type="string"  readonly="false"             other:xPath="/json/document/item[31]/value"                   />
+    <attr name="主な業務"                   xs:type="string"  readonly="false"             other:xPath="/json/document/item[34]/value"                   />
+  </api:info>
+
+  <!-- The GET method corresponds to SELECT. Here you can override the default processing of the SELECT statement. The results of processing are pushed to the schema's output. See SELECT Execution for more information. -->
+  <api:script method="GET">
+
+    <!-- Auth Request -->
+    <api:set attr="LoginRequestIn.method" value="POST"/>
+    <api:set attr="LoginRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/session/"/>
+    <api:set attr="LoginRequestIn.data">
+      {
+            "loginid": "[_connection.User]",
+            "password": "[_connection.Password]"
+      }
+     </api:set>
+
+
+    <rsb:set attr="LoginRequestIn.ElementMapPath#1" value="/session/cookie/key" />
+    <rsb:set attr="LoginRequestIn.ElementMapName#1" value="cookie_key" />
+    <rsb:set attr="LoginRequestIn.ElementMapPath#2" value="/session/cookie/value" />
+    <rsb:set attr="LoginRequestIn.ElementMapName#2" value="cookie_value" />
+    <rsb:set attr="LoginRequestIn.RepeatElement"    value="/"/>
+    <api:set attr="LoginRequestIn.ContentType"   value="application/json"/>
+    <api:set attr="LoginRequestIn.header:name"   value="accept"/>
+    <api:set attr="LoginRequestIn.header:value"  value="application/json"/>
+
+    <api:call op="jsonproviderGet" in="LoginRequestIn" out="LoginRequestOut">
+
+      <api:set attr="MainRequestIn.method" value="GET"/>
+      <api:set attr="MainRequestIn.DataModel" value="DOCUMENT" />
+      <api:set attr="MainRequestIn.JSONPath" value="$.document" />
+      <api:set attr="MainRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/binders/10025/documents/[_input.id | def('1')]" />
+      <api:set attr="MainRequestIn.header:name" value="Cookie"/>
+      <api:set attr="MainRequestIn.header:value" value="[LoginRequestOut.cookie_key]=[LoginRequestOut.cookie_value]"/>
+      <api:set attr="MainRequestIn.EnablePaging" value="True" />  
+
+      <api:call op="jsonproviderGet" in="MainRequestIn" out="MainRequestOut" >
+          <api:push/>
+      </api:call>
+
+      <!-- Main Request -->
+
+    </api:call>
+    <!-- Auth Request -->
+
+
+  </api:script>
+
+  <!-- To add support for INSERTS please see the INSERT Execution page within the help for further information and examples. -->
+  <api:script method="POST">
+    <api:set attr="method" value="POST"/>
+    <api:call op="jsonproviderGet">
+      <api:throw code="500" desc="Inserts are not currently supported."/>
+      <api:push/>
+    </api:call>
+  </api:script>
+
+  <!-- To add support for UPDATES please see the UPDATE Execution page within the help for further information and examples. -->
+  <api:script method="MERGE">
+    <api:set attr="method" value="PUT"/>
+    <api:call op="jsonproviderGet">
+      <api:throw code="500" desc="Updates are not currently supported."/>
+      <api:push/>
+    </api:call>
+  </api:script>
+
+  <!-- To add support for DELETES please see the DELETE Execution page within the help for further information and examples. -->
+  <api:script method="DELETE">
+    <api:set attr="method" value="DELETE"/>
+    <api:call op="jsonproviderGet">
+      <api:throw code="500" desc="Deletes are not currently supported."/>
+      <api:push/>
+    </api:call>
+  </api:script>
+
+</api:script>

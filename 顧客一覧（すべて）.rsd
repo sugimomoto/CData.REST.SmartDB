@@ -1,0 +1,58 @@
+<api:script xmlns:api="http://apiscript.com/ns?v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- See Column Definitions to specify column behavior and use XPaths to extract column values from JSON. -->
+  <api:info title="顧客一覧（すべて）" desc="Generated schema file." xmlns:other="http://apiscript.com/ns?v1">
+    <!-- You can modify the name, type, and column size here. -->
+    <attr name="id"                   xs:type="string"  readonly="false"                   other:xPath="/json/documents/document/id"                   />
+    <attr name="会社名"                   xs:type="string"  readonly="false"               other:xPath="/json/documents/document/item[0]/value"                   />
+    <attr name="主な業務"                   xs:type="string"  readonly="false"             other:xPath="/json/documents/document/item[1]/value"                   />
+    <attr name="担当営業"                   xs:type="string"  readonly="false"              other:xPath="/json/documents/document/item[2]/value/name"                   />
+    <attr name="登録日"                   xs:type="date"  readonly="false"                 other:xPath="/json/documents/document/item[3]/value"                   />
+  </api:info>
+
+  <!-- The GET method corresponds to SELECT. Here you can override the default processing of the SELECT statement. The results of processing are pushed to the schema's output. See SELECT Execution for more information. -->
+  <api:script method="GET">
+
+    <!-- Auth Request -->
+    <api:set attr="LoginRequestIn.method" value="POST"/>
+    <api:set attr="LoginRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/session/"/>
+    <api:set attr="LoginRequestIn.data">
+      {
+            "loginid": "[_connection.User]",
+            "password": "[_connection.Password]"
+      }
+     </api:set>
+
+    <rsb:set attr="LoginRequestIn.ElementMapPath#1" value="/session/cookie/key" />
+    <rsb:set attr="LoginRequestIn.ElementMapName#1" value="cookie_key" />
+    <rsb:set attr="LoginRequestIn.ElementMapPath#2" value="/session/cookie/value" />
+    <rsb:set attr="LoginRequestIn.ElementMapName#2" value="cookie_value" />
+    <rsb:set attr="LoginRequestIn.RepeatElement"    value="/"/>
+    <api:set attr="LoginRequestIn.ContentType"   value="application/json"/>
+    <api:set attr="LoginRequestIn.header:name"   value="accept"/>
+    <api:set attr="LoginRequestIn.header:value"  value="application/json"/>
+
+    <api:call op="jsonproviderGet" in="LoginRequestIn" out="LoginRequestOut">
+
+      <api:set attr="MainRequestIn.method" value="GET"/>
+      <api:set attr="MainRequestIn.DataModel" value="DOCUMENT" />
+      <api:set attr="MainRequestIn.JSONPath" value="$.documents.document" />
+      <api:set attr="MainRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/binders/10025/views/10004/documents" />
+      <api:set attr="MainRequestIn.header:name" value="Cookie"/>
+      <api:set attr="MainRequestIn.header:value" value="[LoginRequestOut.cookie_key]=[LoginRequestOut.cookie_value]"/>
+      <api:set attr="MainRequestIn.EnablePaging" value="True" />  
+
+      <api:call op="jsonproviderGet" in="MainRequestIn" out="MainRequestOut" >
+          <api:push/>
+      </api:call>
+
+      <!-- Main Request -->
+
+    </api:call>
+    <!-- Auth Request -->
+
+
+  </api:script>
+
+
+</api:script>
