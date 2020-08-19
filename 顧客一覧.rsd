@@ -1,13 +1,15 @@
 <api:script xmlns:api="http://apiscript.com/ns?v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- See Column Definitions to specify column behavior and use XPaths to extract column values from JSON. -->
-  <api:info title="顧客一覧（すべて）" desc="Generated schema file." xmlns:other="http://apiscript.com/ns?v1">
+  <api:info title="顧客一覧" desc="Generated schema file." xmlns:other="http://apiscript.com/ns?v1">
     <!-- You can modify the name, type, and column size here. -->
     <attr name="id"                   xs:type="string"  readonly="false"                   other:xPath="/json/documents/document/id"                   />
     <attr name="会社名"                   xs:type="string"  readonly="false"               other:xPath="/json/documents/document/item[0]/value"                   />
-    <attr name="主な業務"                   xs:type="string"  readonly="false"             other:xPath="/json/documents/document/item[1]/value"                   />
-    <attr name="担当営業"                   xs:type="string"  readonly="false"              other:xPath="/json/documents/document/item[2]/value/name"                   />
-    <attr name="登録日"                   xs:type="date"  readonly="false"                 other:xPath="/json/documents/document/item[3]/value"                   />
+    <attr name="従業員数"                   xs:type="integer"  readonly="false"             other:xPath="/json/documents/document/item[1]/value"                   />
+    <attr name="電話番号"                   xs:type="string"  readonly="false"             other:xPath="/json/documents/document/item[2]/value"                   />
+    <attr name="メールアドレス"                   xs:type="string"  readonly="false"       other:xPath="/json/documents/document/item[3]/value"                   />
+    <attr name="担当営業"                   xs:type="string"  readonly="false"              other:xPath="/json/documents/document/item[4]/value/name"                   />
+    <attr name="登録日"                   xs:type="date"  readonly="false"                 other:xPath="/json/documents/document/item[5]/value"                   />
   </api:info>
 
   <!-- The GET method corresponds to SELECT. Here you can override the default processing of the SELECT statement. The results of processing are pushed to the schema's output. See SELECT Execution for more information. -->
@@ -15,7 +17,7 @@
 
     <!-- Auth Request -->
     <api:set attr="LoginRequestIn.method" value="POST"/>
-    <api:set attr="LoginRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/session/"/>
+    <api:set attr="LoginRequestIn.URI" value="[_connection.DataSource]/hibiki/rest/2/session/"/>
     <api:set attr="LoginRequestIn.data">
       {
             "loginid": "[_connection.User]",
@@ -37,7 +39,7 @@
       <api:set attr="MainRequestIn.method" value="GET"/>
       <api:set attr="MainRequestIn.DataModel" value="DOCUMENT" />
       <api:set attr="MainRequestIn.JSONPath" value="$.documents.document" />
-      <api:set attr="MainRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/binders/10025/views/10004/documents" />
+      <api:set attr="MainRequestIn.URI" value="[_connection.DataSource]/hibiki/rest/2/binders/10025/views/10004/documents" />
       <api:set attr="MainRequestIn.header:name" value="Cookie"/>
       <api:set attr="MainRequestIn.header:value" value="[LoginRequestOut.cookie_key]=[LoginRequestOut.cookie_value]"/>
       <api:set attr="MainRequestIn.EnablePaging" value="True" />  

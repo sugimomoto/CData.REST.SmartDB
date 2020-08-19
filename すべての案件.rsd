@@ -22,7 +22,7 @@
 
     <!-- Auth Request -->
     <api:set attr="LoginRequestIn.method" value="POST"/>
-    <api:set attr="LoginRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/session/"/>
+    <api:set attr="LoginRequestIn.URI" value="[_connection.DataSource]/hibiki/rest/2/session/"/>
     <api:set attr="LoginRequestIn.data">
       {
             "loginid": "[_connection.User]",
@@ -44,7 +44,7 @@
       <api:set attr="MainRequestIn.method" value="GET"/>
       <api:set attr="MainRequestIn.DataModel" value="DOCUMENT" />
       <api:set attr="MainRequestIn.JSONPath" value="$.documents.document" />
-      <api:set attr="MainRequestIn.URI" value="[_connection.URI]/hibiki/rest/2/binders/10026/views/10009/documents" />
+      <api:set attr="MainRequestIn.URI" value="[_connection.DataSource]/hibiki/rest/2/binders/10026/views/10009/documents" />
       <api:set attr="MainRequestIn.header:name" value="Cookie"/>
       <api:set attr="MainRequestIn.header:value" value="[LoginRequestOut.cookie_key]=[LoginRequestOut.cookie_value]"/>
       <api:set attr="MainRequestIn.EnablePaging" value="True" />  
